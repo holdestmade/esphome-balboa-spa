@@ -108,6 +108,10 @@ sensor:
       name: Rest Mode
     heatstate:
       name: Heat State
+    filter1_remaining:
+      name: Filter 1 Time Remaining
+    filter2_remaining:
+      name: Filter 2 Time Remaining
 
 binary_sensor:
   - platform: balboa_spa
