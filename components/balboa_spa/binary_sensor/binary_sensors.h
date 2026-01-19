@@ -21,6 +21,7 @@ namespace esphome
         CIRCULATION,
         FILTER_CYCLE_1,
         FILTER_CYCLE_2,
+        CLEANUP_CYCLE,
         RESTMODE,
         HEATSTATE,
         CONNECTED

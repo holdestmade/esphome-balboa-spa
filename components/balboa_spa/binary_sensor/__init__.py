@@ -25,6 +25,7 @@ CONF_HIGHRANGE = "highrange"
 CONF_CIRCULATION = "circulation"
 CONF_FILTER_CYCLE_1 = "filter_cycle_1"
 CONF_FILTER_CYCLE_2 = "filter_cycle_2"
+CONF_CLEANUP_CYCLE = "cleanup_cycle"
 CONF_RESTMODE = "restmode"
 CONF_HEATSTATE = "heatstate"
 CONF_CONNECTED = "connected"
@@ -56,6 +57,11 @@ CONFIG_SCHEMA = cv.Schema(
             device_class=DEVICE_CLASS_RUNNING,
             entity_category=ENTITY_CATEGORY_DIAGNOSTIC
         ),
+        cv.Optional(CONF_CLEANUP_CYCLE): binary_sensor.binary_sensor_schema(
+            SpaSensor,
+            device_class=DEVICE_CLASS_RUNNING,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC
+        ),
         cv.Optional(CONF_RESTMODE): binary_sensor.binary_sensor_schema(
             SpaSensor,
             entity_category=ENTITY_CATEGORY_DIAGNOSTIC
@@ -82,6 +88,7 @@ async def to_code(config):
         CONF_CIRCULATION,
         CONF_FILTER_CYCLE_1,
         CONF_FILTER_CYCLE_2,
+        CONF_CLEANUP_CYCLE,
         CONF_RESTMODE,
         CONF_HEATSTATE,
         CONF_CONNECTED
