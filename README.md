@@ -157,6 +157,8 @@ text_sensor:
       name: "Filter 1 Config"
     filter2_config:
       name: "Filter 2 Config"
+    fault:
+      name: "Spa Fault"
 
 switch:
   - platform: balboa_spa
@@ -339,6 +341,7 @@ The text sensors display current spa status:
 - **spa_time**: Current spa time in HH:MM format
 - **filter1_config**: Current filter 1 configuration in JSON format
 - **filter2_config**: Current filter 2 configuration in JSON format (or "disabled")
+- **fault**: Latest fault log entry as `Code <n>: <message>`
 
 ## Development & CI
 

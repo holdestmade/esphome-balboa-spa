@@ -79,6 +79,7 @@ namespace esphome
 
       void register_listener(const std::function<void(SpaState *)> &func) { this->listeners_.push_back(func); }
       void register_filter_listener(const std::function<void(SpaFilterSettings *)> &func) { this->filter_listeners_.push_back(func); }
+      void register_fault_listener(const std::function<void(SpaFaultLog *)> &func) { this->fault_listeners_.push_back(func); }
 
       bool get_restmode();
       void toggle_heat();
@@ -117,6 +118,7 @@ namespace esphome
 
       std::vector<std::function<void(SpaState *)>> listeners_;
       std::vector<std::function<void(SpaFilterSettings *)>> filter_listeners_;
+      std::vector<std::function<void(SpaFaultLog *)>> fault_listeners_;
 
       char config_request_status = 0;         // stages: 0-> want it; 1-> requested it; 2-> got it; 3-> further processed it
       char faultlog_request_status = 0;       // stages: 0-> want it; 1-> requested it; 2-> got it; 3-> further processed it
