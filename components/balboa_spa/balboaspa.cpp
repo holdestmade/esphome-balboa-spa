@@ -905,6 +905,11 @@ namespace esphome
             faultlog_request_status = 2;
             // ESP_LOGD(TAG, "Spa/debug/faultlog_request_status: have the faultlog, #2");
 
+            for (const auto &fault_listener : this->fault_listeners_)
+            {
+                fault_listener(&spaFaultLog);
+            }
+
             // Update CRC state to prevent reprocessing the same message
             last_state_crc = input_queue[input_queue[1]];
         }
