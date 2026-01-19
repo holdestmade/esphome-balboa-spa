@@ -19,6 +19,8 @@ namespace esphome
         BLOWER,
         HIGHRANGE,
         CIRCULATION,
+        FILTER_CYCLE_1,
+        FILTER_CYCLE_2,
         RESTMODE,
         HEATSTATE,
         CONNECTED

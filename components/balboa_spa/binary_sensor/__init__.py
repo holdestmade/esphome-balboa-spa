@@ -11,7 +11,8 @@ from .. import (
 from esphome.const import (
     DEVICE_CLASS_CONNECTIVITY,
     ENTITY_CATEGORY_DIAGNOSTIC,
-    DEVICE_CLASS_POWER
+    DEVICE_CLASS_POWER,
+    DEVICE_CLASS_RUNNING
 )
 
 DEPENDENCIES = ["balboa_spa"]
@@ -22,6 +23,8 @@ SpaSensorTypeEnum = SpaSensor.enum("BalboaSpaBinarySensorType", True)
 CONF_BLOWER = "blower"
 CONF_HIGHRANGE = "highrange"
 CONF_CIRCULATION = "circulation"
+CONF_FILTER_CYCLE_1 = "filter_cycle_1"
+CONF_FILTER_CYCLE_2 = "filter_cycle_2"
 CONF_RESTMODE = "restmode"
 CONF_HEATSTATE = "heatstate"
 CONF_CONNECTED = "connected"
@@ -41,6 +44,16 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional(CONF_CIRCULATION): binary_sensor.binary_sensor_schema(
             SpaSensor,
             device_class=DEVICE_CLASS_POWER,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC
+        ),
+        cv.Optional(CONF_FILTER_CYCLE_1): binary_sensor.binary_sensor_schema(
+            SpaSensor,
+            device_class=DEVICE_CLASS_RUNNING,
+            entity_category=ENTITY_CATEGORY_DIAGNOSTIC
+        ),
+        cv.Optional(CONF_FILTER_CYCLE_2): binary_sensor.binary_sensor_schema(
+            SpaSensor,
+            device_class=DEVICE_CLASS_RUNNING,
             entity_category=ENTITY_CATEGORY_DIAGNOSTIC
         ),
         cv.Optional(CONF_RESTMODE): binary_sensor.binary_sensor_schema(
@@ -63,7 +76,16 @@ CONFIG_SCHEMA = cv.Schema(
 async def to_code(config):
     parent = await cg.get_variable(config[CONF_SPA_ID])
 
-    for sensor_type in [CONF_BLOWER, CONF_HIGHRANGE, CONF_CIRCULATION, CONF_RESTMODE, CONF_HEATSTATE, CONF_CONNECTED]:
+    for sensor_type in [
+        CONF_BLOWER,
+        CONF_HIGHRANGE,
+        CONF_CIRCULATION,
+        CONF_FILTER_CYCLE_1,
+        CONF_FILTER_CYCLE_2,
+        CONF_RESTMODE,
+        CONF_HEATSTATE,
+        CONF_CONNECTED
+    ]:
         if conf := config.get(sensor_type):
             var = await binary_sensor.new_binary_sensor(conf)
             cg.add(var.set_parent(parent))

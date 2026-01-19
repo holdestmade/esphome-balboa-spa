@@ -118,6 +118,10 @@ binary_sensor:
       name: High Range
     circulation:
       name: Circulation Pump
+    filter_cycle_1:
+      name: Filter Cycle 1 Running
+    filter_cycle_2:
+      name: Filter Cycle 2 Running
     restmode:
       name: Rest Mode
     heatstate:
