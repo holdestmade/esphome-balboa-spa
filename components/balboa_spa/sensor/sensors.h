@@ -34,6 +34,7 @@ namespace esphome
     private:
       BalboaSpaSensorType sensor_type;
       BalboaSpa *parent_ = nullptr;
+      uint32_t last_update_time_ = 0;
     };
 
   } // namespace balboa_spa

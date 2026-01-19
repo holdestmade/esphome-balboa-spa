@@ -8,6 +8,7 @@ namespace esphome
 
         static const char *TAG = "BalboaSpa.sensors";
         static const int MINUTES_PER_DAY = 24 * 60;
+        static const uint32_t FILTER_REMAINING_UPDATE_INTERVAL_MS = 10000;
 
         static bool is_filter_cycle_running(const SpaFilterSettings *settings, uint8_t current_hour, uint8_t current_minute, bool filter_cycle_2)
         {
@@ -151,6 +152,16 @@ namespace esphome
             default:
                 ESP_LOGD(TAG, "Spa/Sensors/UnknownSensorType: SensorType Number: %d", sensor_type);
                 // Unknown enum value. Ignore
+                return;
+            }
+
+            if (sensor_type == BalboaSpaSensorType::FILTER1_REMAINING || sensor_type == BalboaSpaSensorType::FILTER2_REMAINING)
+            {
+                if (this->state != sensor_state_value || this->last_update_time_ + FILTER_REMAINING_UPDATE_INTERVAL_MS < millis())
+                {
+                    this->publish_state(sensor_state_value);
+                    this->last_update_time_ = millis();
+                }
                 return;
             }
 
