@@ -20,6 +20,8 @@ namespace esphome
         CIRCULATION = 3,
         RESTMODE = 4,
         HEATSTATE = 5,
+        FILTER1_REMAINING = 6,
+        FILTER2_REMAINING = 7,
       };
 
     public:
@@ -31,6 +33,8 @@ namespace esphome
 
     private:
       BalboaSpaSensorType sensor_type;
+      BalboaSpa *parent_ = nullptr;
+      uint32_t last_update_time_ = 0;
     };
 
   } // namespace balboa_spa
