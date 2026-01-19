@@ -43,12 +43,6 @@ namespace esphome
             {
                 read_serial();
             }
-
-            // Run through listeners
-            for (const auto &listener : this->listeners_)
-            {
-                listener(&spaState);
-            }
         }
 
         float BalboaSpa::get_setup_priority() const { return esphome::setup_priority::LATE; }
@@ -614,6 +608,7 @@ namespace esphome
         {
             // 25:Flag Byte 20 - Set Temperature
             float temp_read = 0.0f;
+            bool new_state = false;
 
             if (spa_temp_scale == TEMP_SCALE::C)
             {
@@ -628,15 +623,24 @@ namespace esphome
                 temp_read >= ESPHOME_BALBOASPA_MIN_TEMPERATURE_C &&
                 temp_read <= ESPHOME_BALBOASPA_MAX_TEMPERATURE_C)
             {
-                spaState.target_temp = temp_read;
-                ESP_LOGD(TAG, "Spa/temperature/target: %.2f C", temp_read);
+                if (spaState.target_temp != temp_read)
+                {
+                    spaState.target_temp = temp_read;
+                    ESP_LOGD(TAG, "Spa/temperature/target: %.2f C", temp_read);
+                    new_state = true;
+                }
             }
             else if (esphome_temp_scale == TEMP_SCALE::F &&
                      temp_read >= ESPHOME_BALBOASPA_MIN_TEMPERATURE_F &&
                      temp_read <= ESPHOME_BALBOASPA_MAX_TEMPERATURE_F)
             {
-                spaState.target_temp = convert_c_to_f(temp_read);
-                ESP_LOGD(TAG, "Spa/temperature/target: %.2f F", temp_read);
+                float target_temp = convert_c_to_f(temp_read);
+                if (spaState.target_temp != target_temp)
+                {
+                    spaState.target_temp = target_temp;
+                    ESP_LOGD(TAG, "Spa/temperature/target: %.2f F", target_temp);
+                    new_state = true;
+                }
             }
             else
             {
@@ -658,13 +662,22 @@ namespace esphome
 
                 if (esphome_temp_scale == TEMP_SCALE::C)
                 {
-                    spaState.current_temp = temp_read;
-                    ESP_LOGD(TAG, "Spa/temperature/current: %.2f C", temp_read);
+                    if (spaState.current_temp != temp_read)
+                    {
+                        spaState.current_temp = temp_read;
+                        ESP_LOGD(TAG, "Spa/temperature/current: %.2f C", temp_read);
+                        new_state = true;
+                    }
                 }
                 else if (esphome_temp_scale == TEMP_SCALE::F)
                 {
-                    spaState.current_temp = convert_c_to_f(temp_read);
-                    ESP_LOGD(TAG, "Spa/temperature/current: %.2f F", temp_read);
+                    float current_temp = convert_c_to_f(temp_read);
+                    if (spaState.current_temp != current_temp)
+                    {
+                        spaState.current_temp = current_temp;
+                        ESP_LOGD(TAG, "Spa/temperature/current: %.2f F", current_temp);
+                        new_state = true;
+                    }
                 }
                 else
                 {
@@ -687,7 +700,11 @@ namespace esphome
                 spaState.minutes = target_minute;
             }
 
-            spaState.rest_mode = input_queue[10];
+            if (spaState.rest_mode != input_queue[10])
+            {
+                spaState.rest_mode = input_queue[10];
+                new_state = true;
+            }
 
             // 14:Flags Byte 9 - Filter cycle status
             double spa_component_state = bitRead(input_queue[14], 0);
@@ -695,6 +712,7 @@ namespace esphome
             {
                 ESP_LOGD(TAG, "Spa/filter_cycle_1/state: %.0f", spa_component_state);
                 spaState.filter_cycle_1 = spa_component_state;
+                new_state = true;
             }
 
             spa_component_state = bitRead(input_queue[14], 1);
@@ -702,16 +720,23 @@ namespace esphome
             {
                 ESP_LOGD(TAG, "Spa/filter_cycle_2/state: %.0f", spa_component_state);
                 spaState.filter_cycle_2 = spa_component_state;
+                new_state = true;
             }
 
             // 15:Flags Byte 10 / Heat status, Temp Range
-            spaState.heat_state = bitRead(input_queue[15], 4);
+            spa_component_state = bitRead(input_queue[15], 4);
+            if (spa_component_state != spaState.heat_state)
+            {
+                spaState.heat_state = spa_component_state;
+                new_state = true;
+            }
 
             spa_component_state = bitRead(input_queue[15], 2);
             if (spa_component_state != spaState.highrange)
             {
                 ESP_LOGD(TAG, "Spa/highrange/state: %.0f", spa_component_state); // LOW
                 spaState.highrange = spa_component_state;
+                new_state = true;
             }
 
             // 16:Flags Byte 11 - Multi-speed jet pumps (2 bits each: 0=OFF, 1=LOW, 2=HIGH)
@@ -720,6 +745,7 @@ namespace esphome
             {
                 ESP_LOGD(TAG, "Spa/jet_1/state: %.0f", spa_component_state);
                 spaState.jet1 = spa_component_state;
+                new_state = true;
             }
 
             spa_component_state = (input_queue[16] & 0x0C) >> 2; // Bits 2-3 for jet2
@@ -727,6 +753,7 @@ namespace esphome
             {
                 ESP_LOGD(TAG, "Spa/jet_2/state: %.0f", spa_component_state);
                 spaState.jet2 = spa_component_state;
+                new_state = true;
             }
 
             spa_component_state = (input_queue[16] & 0x30) >> 4; // Bits 4-5 for jet3
@@ -734,6 +761,7 @@ namespace esphome
             {
                 ESP_LOGD(TAG, "Spa/jet_3/state: %.0f", spa_component_state);
                 spaState.jet3 = spa_component_state;
+                new_state = true;
             }
 
             spa_component_state = (input_queue[16] & 0xC0) >> 6; // Bits 6-7 for jet4
@@ -741,6 +769,7 @@ namespace esphome
             {
                 ESP_LOGD(TAG, "Spa/jet_4/state: %.0f", spa_component_state);
                 spaState.jet4 = spa_component_state;
+                new_state = true;
             }
 
             // 18:Flags Byte 13
@@ -749,6 +778,7 @@ namespace esphome
             {
                 ESP_LOGD(TAG, "Spa/circ/state: %.0f", spa_component_state);
                 spaState.circulation = spa_component_state;
+                new_state = true;
             }
 
             spa_component_state = bitRead(input_queue[18], 2);
@@ -756,6 +786,7 @@ namespace esphome
             {
                 ESP_LOGD(TAG, "Spa/blower/state: %.0f", spa_component_state);
                 spaState.blower = spa_component_state;
+                new_state = true;
             }
 
             spa_component_state = input_queue[19] == 0x03;
@@ -764,6 +795,7 @@ namespace esphome
             {
                 ESP_LOGD(TAG, "Spa/light/state: %.0f", spa_component_state);
                 spaState.light = spa_component_state;
+                new_state = true;
             }
 
             spa_component_state = (input_queue[19] & 0x0C) >> 2; // Check bits 2-3 for light2;
@@ -771,9 +803,16 @@ namespace esphome
             {
                 ESP_LOGD(TAG, "Spa/light2/state: %.0f", spa_component_state);
                 spaState.light2 = spa_component_state;
+                new_state = true;
             }
 
-            // TODO: callback on newState
+            if (new_state)
+            {
+                for (const auto &listener : this->listeners_)
+                {
+                    listener(&spaState);
+                }
+            }
 
             last_state_crc = input_queue[input_queue[1]];
         }
