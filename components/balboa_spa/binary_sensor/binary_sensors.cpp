@@ -36,6 +36,12 @@ namespace esphome
             case BalboaSpaBinarySensorType::CIRCULATION:
                 sensor_state_value = spaState->circulation;
                 break;
+            case BalboaSpaBinarySensorType::FILTER_CYCLE_1:
+                sensor_state_value = spaState->filter_cycle_1;
+                break;
+            case BalboaSpaBinarySensorType::FILTER_CYCLE_2:
+                sensor_state_value = spaState->filter_cycle_2;
+                break;
             case BalboaSpaBinarySensorType::RESTMODE:
                 state_value = spaState->rest_mode;
                 sensor_state_value = state_value;

@@ -689,10 +689,25 @@ namespace esphome
 
             spaState.rest_mode = input_queue[10];
 
+            // 14:Flags Byte 9 - Filter cycle status
+            double spa_component_state = bitRead(input_queue[14], 0);
+            if (spa_component_state != spaState.filter_cycle_1)
+            {
+                ESP_LOGD(TAG, "Spa/filter_cycle_1/state: %.0f", spa_component_state);
+                spaState.filter_cycle_1 = spa_component_state;
+            }
+
+            spa_component_state = bitRead(input_queue[14], 1);
+            if (spa_component_state != spaState.filter_cycle_2)
+            {
+                ESP_LOGD(TAG, "Spa/filter_cycle_2/state: %.0f", spa_component_state);
+                spaState.filter_cycle_2 = spa_component_state;
+            }
+
             // 15:Flags Byte 10 / Heat status, Temp Range
             spaState.heat_state = bitRead(input_queue[15], 4);
 
-            double spa_component_state = bitRead(input_queue[15], 2);
+            spa_component_state = bitRead(input_queue[15], 2);
             if (spa_component_state != spaState.highrange)
             {
                 ESP_LOGD(TAG, "Spa/highrange/state: %.0f", spa_component_state); // LOW
