@@ -75,6 +75,7 @@ namespace esphome
       void set_client_id(uint8_t id);
 
       bool is_communicating();
+      bool filter_settings_valid() const { return filter_settings_valid_; }
 
       void register_listener(const std::function<void(SpaState *)> &func) { this->listeners_.push_back(func); }
       void register_filter_listener(const std::function<void(SpaFilterSettings *)> &func) { this->filter_listeners_.push_back(func); }
@@ -127,6 +128,7 @@ namespace esphome
       SpaState spaState;
       SpaFaultLog spaFaultLog;
       SpaFilterSettings spaFilterSettings;
+      bool filter_settings_valid_ = false;
 
       void read_serial();
       void update_sensors();

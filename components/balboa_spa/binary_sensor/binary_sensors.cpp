@@ -7,6 +7,45 @@ namespace esphome
     {
 
         static const char *TAG = "BalboaSpa.binary_sensors";
+        static const int MINUTES_PER_DAY = 24 * 60;
+
+        static bool is_filter_cycle_running(const SpaFilterSettings *settings, uint8_t current_hour, uint8_t current_minute, bool filter_cycle_2)
+        {
+            uint8_t start_hour = settings->filter1_hour;
+            uint8_t start_minute = settings->filter1_minute;
+            uint8_t duration_hour = settings->filter1_duration_hour;
+            uint8_t duration_minute = settings->filter1_duration_minute;
+
+            if (filter_cycle_2)
+            {
+                if (!settings->filter2_enable)
+                {
+                    return false;
+                }
+
+                start_hour = settings->filter2_hour;
+                start_minute = settings->filter2_minute;
+                duration_hour = settings->filter2_duration_hour;
+                duration_minute = settings->filter2_duration_minute;
+            }
+
+            const int start_total = static_cast<int>(start_hour) * 60 + static_cast<int>(start_minute);
+            const int duration_total = static_cast<int>(duration_hour) * 60 + static_cast<int>(duration_minute);
+            if (duration_total <= 0)
+            {
+                return false;
+            }
+
+            const int now_total = static_cast<int>(current_hour) * 60 + static_cast<int>(current_minute);
+            const int end_total = start_total + duration_total;
+
+            if (end_total >= MINUTES_PER_DAY)
+            {
+                return now_total >= start_total || now_total < (end_total - MINUTES_PER_DAY);
+            }
+
+            return now_total >= start_total && now_total < end_total;
+        }
 
         void BalboaSpaBinarySensors::set_parent(BalboaSpa *parent)
         {
@@ -35,6 +74,22 @@ namespace esphome
                 break;
             case BalboaSpaBinarySensorType::CIRCULATION:
                 sensor_state_value = spaState->circulation;
+                break;
+            case BalboaSpaBinarySensorType::FILTER_CYCLE_1:
+                if (!spa->filter_settings_valid())
+                {
+                    this->publish_state(NAN);
+                    return;
+                }
+                sensor_state_value = is_filter_cycle_running(spa->get_current_filter_settings(), spaState->hour, spaState->minutes, false);
+                break;
+            case BalboaSpaBinarySensorType::FILTER_CYCLE_2:
+                if (!spa->filter_settings_valid())
+                {
+                    this->publish_state(NAN);
+                    return;
+                }
+                sensor_state_value = is_filter_cycle_running(spa->get_current_filter_settings(), spaState->hour, spaState->minutes, true);
                 break;
             case BalboaSpaBinarySensorType::RESTMODE:
                 state_value = spaState->rest_mode;
