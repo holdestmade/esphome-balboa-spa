@@ -91,6 +91,15 @@ namespace esphome
                 }
                 sensor_state_value = is_filter_cycle_running(spa->get_current_filter_settings(), spaState->hour, spaState->minutes, true);
                 break;
+            case BalboaSpaBinarySensorType::CLEANUP_CYCLE:
+                state_value = spaState->cleanup_cycle;
+                if (state_value == 254)
+                {
+                    this->publish_state(NAN);
+                    return;
+                }
+                sensor_state_value = state_value;
+                break;
             case BalboaSpaBinarySensorType::RESTMODE:
                 state_value = spaState->rest_mode;
                 sensor_state_value = state_value;
