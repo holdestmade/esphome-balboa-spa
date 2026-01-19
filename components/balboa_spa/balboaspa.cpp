@@ -789,6 +789,7 @@ namespace esphome
             spaFilterSettings.filter2_minute = input_queue[10];
             spaFilterSettings.filter2_duration_hour = input_queue[11];
             spaFilterSettings.filter2_duration_minute = input_queue[12];
+            filter_settings_valid_ = true;
 
             // Filter 1 time conversion
             static PROGMEM const char *format_string = R"({"start":"%.2i:%.2i","duration":"%.2i:%.2i"} )";
