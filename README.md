@@ -158,13 +158,17 @@ text_sensor:
     filter2_config:
       name: "Filter 2 Config"
 
+switch:
+  - platform: balboa_spa
+    balboa_spa_id: spa
+    filter2_enable:
+      name: "Filter 2 Enabled"
+
 button:
   - platform: balboa_spa
     balboa_spa_id: spa
     sync_time:
       name: "Sync Spa Time"
-    disable_filter2:
-      name: "Disable Filter 2"
 ```
 
 ## Jet Control: Switch vs Fan Components
@@ -314,7 +318,10 @@ Text components automatically populate with current spa values:
 ### Button Components
 
 - **sync_time**: Synchronizes spa time with ESPHome system time
-- **disable_filter2**: Disables the filter 2 schedule
+
+### Switch Components
+
+- **filter2_enable**: Enables or disables the filter 2 schedule
 
 ### Examples:
 - Set spa time to 2:30 PM: `14:30` or `2:30`
