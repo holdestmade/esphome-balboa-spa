@@ -813,7 +813,7 @@ namespace esphome
             {
                 cleanup_cycle = 1;
             }
-            else if (cleanup_state == 0x04)
+            else if (cleanup_state == 0x04 || cleanup_state == 0x00 || cleanup_state == 0x02)
             {
                 cleanup_cycle = 0;
             }
