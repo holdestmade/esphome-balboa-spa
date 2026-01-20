@@ -126,6 +126,8 @@ binary_sensor:
       name: Filter Cycle 1 Running
     filter_cycle_2:
       name: Filter Cycle 2 Running
+    cleanup_cycle:
+      name: Cleanup Cycle Running
     restmode:
       name: Rest Mode
     heatstate:

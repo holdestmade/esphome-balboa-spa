@@ -806,6 +806,25 @@ namespace esphome
                 new_state = true;
             }
 
+            // 19:Flags Byte 19 - Cleanup cycle (lower 4 bits)
+            uint8_t cleanup_state = input_queue[24] & 0x0F;
+            uint8_t cleanup_cycle = 254;
+            if (cleanup_state == 0x0C)
+            {
+                cleanup_cycle = 1;
+            }
+            else if (cleanup_state == 0x04 || cleanup_state == 0x00 || cleanup_state == 0x02)
+            {
+                cleanup_cycle = 0;
+            }
+
+            if (cleanup_cycle != spaState.cleanup_cycle)
+            {
+                ESP_LOGD(TAG, "Spa/cleanup_cycle/state: 0x%02X", cleanup_state);
+                spaState.cleanup_cycle = cleanup_cycle;
+                new_state = true;
+            }
+
             if (new_state)
             {
                 for (const auto &listener : this->listeners_)
