@@ -111,6 +111,7 @@ namespace esphome
       needs_update = new_mode != this->mode_ || needs_update;
       this->mode_ = new_mode;
 
+      needs_update = this->last_update_time == 0 || needs_update;
       needs_update = this->last_update_time + 300000 < millis() || needs_update;
 
       if (needs_update)
