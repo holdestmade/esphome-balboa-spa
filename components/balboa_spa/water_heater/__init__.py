@@ -18,13 +18,11 @@ BalboaSpaWaterHeater = balboa_spa_ns.class_(
     water_heater.WaterHeater,
 )
 
-CONFIG_SCHEMA = (
-    water_heater.WATER_HEATER_SCHEMA.extend(
-        {
-            cv.GenerateID(): cv.declare_id(BalboaSpaWaterHeater),
-            cv.GenerateID(CONF_SPA_ID): cv.use_id(BalboaSpa),
-        }
-    )
+CONFIG_SCHEMA = water_heater.water_heater_schema(BalboaSpaWaterHeater).extend(
+    {
+        cv.GenerateID(): cv.declare_id(BalboaSpaWaterHeater),
+        cv.GenerateID(CONF_SPA_ID): cv.use_id(BalboaSpa),
+    }
 )
 
 
