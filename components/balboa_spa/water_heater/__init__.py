@@ -28,7 +28,6 @@ CONFIG_SCHEMA = water_heater.water_heater_schema(BalboaSpaWaterHeater).extend(
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
-    await cg.register_component(var, config)
     await water_heater.register_water_heater(var, config)
 
     parent = await cg.get_variable(config[CONF_SPA_ID])
