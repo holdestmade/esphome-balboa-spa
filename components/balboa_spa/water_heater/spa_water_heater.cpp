@@ -73,7 +73,11 @@ namespace esphome
 
     bool inline is_diff_no_nan(float a, float b)
     {
-      return !std::isnan(a) && !std::isnan(b) && b != a;
+      if (std::isnan(a))
+      {
+        return false;
+      }
+      return std::isnan(b) || b != a;
     }
 
     void BalboaSpaWaterHeater::update(SpaState *spaState)
