@@ -23,6 +23,7 @@ namespace esphome
 
     protected:
       void control(const water_heater::WaterHeaterCall &call) override;
+      water_heater::WaterHeaterCallInternal make_call() override;
       water_heater::WaterHeaterTraits traits() override;
 
     private:

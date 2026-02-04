@@ -59,6 +59,11 @@ namespace esphome
       }
     }
 
+    water_heater::WaterHeaterCallInternal BalboaSpaWaterHeater::make_call()
+    {
+      return water_heater::WaterHeaterCallInternal(this);
+    }
+
     void BalboaSpaWaterHeater::set_parent(BalboaSpa *parent)
     {
       spa = parent;
