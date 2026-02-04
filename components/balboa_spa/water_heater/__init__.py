@@ -14,7 +14,6 @@ AUTO_LOAD = ["water_heater"]
 
 BalboaSpaWaterHeater = balboa_spa_ns.class_(
     "BalboaSpaWaterHeater",
-    cg.Component,
     water_heater.WaterHeater,
 )
 

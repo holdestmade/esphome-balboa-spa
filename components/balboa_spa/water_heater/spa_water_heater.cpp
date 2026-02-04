@@ -16,16 +16,14 @@ namespace esphome
         water_heater::WATER_HEATER_MODE_PERFORMANCE,
       });
       traits.set_supports_current_temperature(true);
-      traits.set_supports_target_temperature(true);
-      traits.set_supports_action(true);
       return traits;
     }
 
     void BalboaSpaWaterHeater::control(const water_heater::WaterHeaterCall &call)
     {
-      if (call.get_target_temperature().has_value())
+      if (!std::isnan(call.get_target_temperature()))
       {
-        spa->set_temp(*call.get_target_temperature());
+        spa->set_temp(call.get_target_temperature());
       }
 
       if (call.get_mode().has_value())
@@ -79,22 +77,18 @@ namespace esphome
 
       if (!spa->is_communicating())
       {
-        this->target_temperature = NAN;
-        this->current_temperature = NAN;
+        this->target_temperature_ = NAN;
+        this->current_temperature_ = NAN;
         return;
       }
 
       float target_temp = spaState->target_temp;
-      needs_update = is_diff_no_nan(target_temp, this->target_temperature) || needs_update;
-      this->target_temperature = !std::isnan(target_temp) ? target_temp : this->target_temperature;
+      needs_update = is_diff_no_nan(target_temp, this->target_temperature_) || needs_update;
+      this->target_temperature_ = !std::isnan(target_temp) ? target_temp : this->target_temperature_;
 
       auto current_temp = spaState->current_temp;
-      needs_update = is_diff_no_nan(current_temp, this->current_temperature) || needs_update;
-      this->current_temperature = !std::isnan(current_temp) ? current_temp : this->current_temperature;
-
-      auto new_action = spaState->heat_state == 1 ? water_heater::WATER_HEATER_ACTION_HEATING : water_heater::WATER_HEATER_ACTION_IDLE;
-      needs_update = new_action != this->action || needs_update;
-      this->action = new_action;
+      needs_update = is_diff_no_nan(current_temp, this->current_temperature_) || needs_update;
+      this->current_temperature_ = !std::isnan(current_temp) ? current_temp : this->current_temperature_;
 
       water_heater::WaterHeaterMode new_mode;
       if (spaState->rest_mode == 1)
@@ -105,8 +99,8 @@ namespace esphome
       {
         new_mode = spaState->highrange == 1 ? water_heater::WATER_HEATER_MODE_PERFORMANCE : water_heater::WATER_HEATER_MODE_ECO;
       }
-      needs_update = new_mode != this->mode || needs_update;
-      this->mode = new_mode;
+      needs_update = new_mode != this->mode_ || needs_update;
+      this->mode_ = new_mode;
 
       needs_update = this->last_update_time + 300000 < millis() || needs_update;
 

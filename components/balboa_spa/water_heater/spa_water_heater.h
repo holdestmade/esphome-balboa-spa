@@ -9,7 +9,7 @@ namespace esphome
   namespace balboa_spa
   {
 
-    class BalboaSpaWaterHeater : public water_heater::WaterHeater, public Component
+    class BalboaSpaWaterHeater : public water_heater::WaterHeater
     {
     public:
       BalboaSpaWaterHeater()
